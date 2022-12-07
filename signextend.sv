@@ -18,8 +18,8 @@ always_comb
     3'b10:     ImmOp = { {19{instr[31]}}, instr[31], instr[7], instr[30:25], instr[11:8], 1'b0 }; //B-type
     3'b11:     ImmOp = {32'b0}; //R-Type (has no immediate)
     3'b100:    ImmOp = { {12{instr[31]}}, instr[31:12] }; // U-Type
-    3'b101:    ImmOp = { {11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0 }  // J-type     
-    default:ImmOp = { {20{instr[31]}}, instr[31:20] }; //default I type
+    3'b101:    ImmOp = { {11{instr[31]}}, instr[31], instr[19:12], instr[20], instr[30:21], 1'b0 };  // J-type     
+    default:   ImmOp = { {20{instr[31]}}, instr[31:20] }; //default I type
     
     endcase
 

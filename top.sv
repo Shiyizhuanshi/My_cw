@@ -9,7 +9,7 @@ module top #(
 
 logic [D_WIDTH-1:0] PC;
 logic [D_WIDTH-1:0] ImmOp;
-logic               PCsrc;
+logic [1:0]         PCsrc;
 logic               EQ;
 logic               RegWrite;
 logic               ALUctrl;
@@ -36,6 +36,7 @@ counter_unit pc_counter(
     .rst(rst),
     .PCsrc(PCsrc),
     .ImmOp(ImmOp),
+    .RD1(Rd1),
     .PC(PC)
 );
 
@@ -70,6 +71,7 @@ RegFile register_file(
     .ResultSrc(ResultSrc),
     .a0(a0),
     .PC(PC),
+    .trigger(trigger),
     .PCJump(PCJump)
 );
 

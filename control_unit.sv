@@ -26,7 +26,7 @@ assign opcode = instr[6:0];
 always_comb
 
 
-    case(opcode)
+case(opcode)
 
 //R-type instructions
      7'b0110011: 
@@ -34,7 +34,7 @@ always_comb
                 case(funct3)
             
                 3'b000: 
-                    if (funct7 = 7'b0) //add 
+                    if (funct7 == 7'b0) //add 
                         begin
                             ALUctrl = 4'b0000;
                             RegWrite = 1;
@@ -109,7 +109,7 @@ always_comb
                 
                 3'b101: 
 
-                    if (funct7 = 7'b0) //shift right logical
+                    if (funct7 == 7'b0) //shift right logical
                         begin
                             ALUctrl = 4'b0110;
                             RegWrite = 1;
@@ -203,22 +203,22 @@ always_comb
                 3'b001:
                     begin //load half (lh)
                         ALUctrl = instr[14:12];
-                        RegWrite = ;
-                        ImmSrc = ;
-                        ALUsrc = ;
-                        PCsrc = ;
-                        ResultSrc = ;
+                        RegWrite = 1;
+                        ImmSrc = 3'b0;
+                        ALUsrc = 1;
+                        PCsrc = 2'b0;
+                        ResultSrc = 1;
                         PCJump = 0;
                         Data_WE = 0;
                     end
                 3'b000: //load byte (lb)
                     begin
                         ALUctrl = instr[14:12];
-                        RegWrite = ;
-                        ImmSrc = ;
-                        ALUsrc = ;
-                        PCsrc = ;
-                        ResultSrc = ;
+                        RegWrite = 1;
+                        ImmSrc = 3'b0;
+                        ALUsrc = 1;
+                        PCsrc = 2'b0;
+                        ResultSrc = 1;
                         PCJump = 0;
                         Data_WE = 0;
                     end
@@ -244,23 +244,23 @@ always_comb
                 3'b001: //store half (sh)
                     begin
                         ALUctrl = instr[14:12];
-                        RegWrite = ;
-                        ImmSrc = ;
+                        RegWrite = 0;
+                        ImmSrc = 3'b01;
                         ALUsrc = 1;
-                        PCsrc = ;
-                        ResultSrc = ;
+                        PCsrc = 0;
                         Data_WE = 1;
+                        ResultSrc = 1;
                         PCJump = 0;
                     end
                 3'b000: //store byte (sb)
                     begin
                         ALUctrl = instr[14:12];
-                        RegWrite = ;
-                        ImmSrc = ;
+                        RegWrite = 0;
+                        ImmSrc = 3'b01;
                         ALUsrc = 1;
-                        PCsrc = ;
-                        ResultSrc = ;
+                        PCsrc = 0;
                         Data_WE = 1;
+                        ResultSrc = 1;
                         PCJump = 0;
                     end
                     
@@ -273,17 +273,17 @@ always_comb
                     begin //bne
                         ALUctrl = instr[14:12];
                         RegWrite = 0;
-                        PCsrc = 0,~EQ;   
+                        PCsrc = {0, ~EQ};   
                         ImmSrc = 3'b10;
                         ALUsrc = 0;
                         ResultSrc = 0;
                         PCJump = 0;
                     end
-                if (funct3 == 3'b0)
+                else if (funct3 == 3'b0)
                     begin //beq
                         ALUctrl = instr[14:12];
                         RegWrite = 0;
-                        PCsrc = 0,~EQ;   
+                        PCsrc = {0,~EQ};   
                         ImmSrc = 3'b10;
                         ALUsrc = 0;
                         ResultSrc = 0;
@@ -291,7 +291,7 @@ always_comb
                     end
 
 
-    7'b1101111: if //jal
+    7'b1101111: //jal
                 begin
                     ALUctrl = instr[14:12];
                     RegWrite = 1;
