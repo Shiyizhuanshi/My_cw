@@ -30,30 +30,18 @@ case(opcode)
 //R-type instructions
      7'b0110011: 
                 case(funct3)
-            
-                3'b000: begin 
+                3'b000:
                     if (funct7 == 7'b0) //add 
-                        begin
                             ALUctrl = 4'b0000;
-                            RegWrite = 1;
-                            ImmSrc = 3'b011;
-                            ALUsrc = 0;
-                            PCsrc = 2'b0;
-                            ResultSrc = 0;
-                            Data_WE = 0;
-                            PCJump = 0;
-                        end
                     else //sub
-                        begin
-                            ALUctrl = 4'b0001;
-                            RegWrite = 1;
-                            ImmSrc = 3'b011;
-                            ALUsrc = 0;
-                            PCsrc = 2'b0;
-                            ResultSrc = 0;
-                            Data_WE = 0;
-                            PCJump = 0;
-                        end    end                 
+                            ALUctrl = 4'b0001;     
+                    RegWrite = 1;
+                    ImmSrc = 3'b011;
+                    ALUsrc = 0;
+                    PCsrc = 2'b0;
+                    ResultSrc = 0;
+                    Data_WE = 0;
+                    PCJump = 0;     
                             
 
                 3'b001: //shift left logical (sll)
