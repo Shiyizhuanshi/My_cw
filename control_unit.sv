@@ -7,7 +7,7 @@ module control_unit #(
     output logic           ResultSrc,
     output logic           ALUsrc,
     output logic [1:0]     PCsrc,
-    output logic [2:0]     ALUctrl,
+    output logic [3:0]     ALUctrl,
     output logic [2:0]     ImmSrc,
     output logic           Data_WE,
     output logic           PCJump
@@ -25,15 +25,13 @@ assign opcode = instr[6:0];
 
 always_comb
 
-
 case(opcode)
 
 //R-type instructions
      7'b0110011: 
-
                 case(funct3)
             
-                3'b000: 
+                3'b000: begin 
                     if (funct7 == 7'b0) //add 
                         begin
                             ALUctrl = 4'b0000;
@@ -55,7 +53,7 @@ case(opcode)
                             ResultSrc = 0;
                             Data_WE = 0;
                             PCJump = 0;
-                        end                     
+                        end    end                 
                             
 
                 3'b001: //shift left logical (sll)
@@ -160,7 +158,7 @@ case(opcode)
                     
                 default:
                     begin
-                        ALUctrl = instr[14:12];
+                        ALUctrl = 4'b0000;
                         RegWrite = 0;
                         ImmSrc = 3'b0;
                         ALUsrc = 0;
@@ -174,16 +172,19 @@ case(opcode)
 
 //I type instructions
 
-    7'b0010011:
-                begin //addi
-                    ALUctrl = instr[14:12];
-                    RegWrite = 1;
-                    ImmSrc = 3'b0;
-                    ALUsrc = 1;
-                    PCsrc = 2'b0;
-                    ResultSrc = 0;
-                    Data_WE = 0;
-                end
+    7'b0010011: begin
+        case(funct3)
+            3'b000: ALUctrl = 4'b0000; //addi
+            3'b001: ALUctrl = 4'b0010; //slli
+        endcase
+        RegWrite = 1;
+        ImmSrc = 3'b0;
+        ALUsrc = 1;
+        PCsrc = 2'b0;
+        ResultSrc = 0;
+        Data_WE = 0;
+        PCJump = 0;
+    end
 
 //I-type, loading instructions
     7'b0000011: 
@@ -191,7 +192,7 @@ case(opcode)
 
                 3'b010:
                     begin  //load word (lw)
-                        ALUctrl = instr[14:12];
+                        ALUctrl = 4'b0000;
                         RegWrite = 1;
                         ImmSrc = 3'b0;
                         ALUsrc = 1;
@@ -202,7 +203,7 @@ case(opcode)
                     end
                 3'b001:
                     begin //load half (lh)
-                        ALUctrl = instr[14:12];
+                        ALUctrl = 4'b0000;
                         RegWrite = 1;
                         ImmSrc = 3'b0;
                         ALUsrc = 1;
@@ -213,7 +214,7 @@ case(opcode)
                     end
                 3'b000: //load byte (lb)
                     begin
-                        ALUctrl = instr[14:12];
+                        ALUctrl = 4'b0000;
                         RegWrite = 1;
                         ImmSrc = 3'b0;
                         ALUsrc = 1;
@@ -230,7 +231,7 @@ case(opcode)
 
                 3'b010:
                     begin //store word (sw)
-                        ALUctrl = instr[14:12];
+                        ALUctrl = 4'b0000;
                         RegWrite = 0;
                         ImmSrc = 3'b01;
                         ALUsrc = 1;
@@ -243,7 +244,7 @@ case(opcode)
                     end
                 3'b001: //store half (sh)
                     begin
-                        ALUctrl = instr[14:12];
+                        ALUctrl = 4'b0000;
                         RegWrite = 0;
                         ImmSrc = 3'b01;
                         ALUsrc = 1;
@@ -254,7 +255,7 @@ case(opcode)
                     end
                 3'b000: //store byte (sb)
                     begin
-                        ALUctrl = instr[14:12];
+                        ALUctrl = 4'b0000;
                         RegWrite = 0;
                         ImmSrc = 3'b01;
                         ALUsrc = 1;
@@ -271,7 +272,7 @@ case(opcode)
 
     7'b1100011: if (funct3 == 3'b1)
                     begin //bne
-                        ALUctrl = instr[14:12];
+                        ALUctrl = 4'b0000;
                         RegWrite = 0;
                         PCsrc = {0, ~EQ};   
                         ImmSrc = 3'b10;
@@ -281,9 +282,9 @@ case(opcode)
                     end
                 else if (funct3 == 3'b0)
                     begin //beq
-                        ALUctrl = instr[14:12];
+                        ALUctrl = 4'b0000;
                         RegWrite = 0;
-                        PCsrc = {0,~EQ};   
+                        PCsrc = {0,EQ};   
                         ImmSrc = 3'b10;
                         ALUsrc = 0;
                         ResultSrc = 0;
@@ -293,20 +294,20 @@ case(opcode)
 
     7'b1101111: //jal
                 begin
-                    ALUctrl = instr[14:12];
+                    ALUctrl = 4'b0000;
                     RegWrite = 1;
                     ImmSrc = 3'b101;
                     ALUsrc = 1;
-                    PCsrc = 2'b10;
+                    PCsrc = 2'b01;
                     ResultSrc = 0;
                     PCJump = 1;
     end
 
     7'b1100111: //jalr
                 begin
-                    ALUctrl = instr[14:12];
+                    ALUctrl = 4'b0000;
                     RegWrite = 1; 
-                    ImmSrc = 3'b101;
+                    ImmSrc = 3'b000;
                     ALUsrc = 1;
                     PCsrc = 2'b11;
                     ResultSrc = 0;
@@ -317,7 +318,7 @@ case(opcode)
 
 
     default:begin
-    ALUctrl = instr[14:12];
+    ALUctrl = 4'b0000;
     ImmSrc = 2'b00;
     PCsrc = 0;
     RegWrite = 0;

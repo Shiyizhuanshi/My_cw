@@ -4,7 +4,8 @@ module top #(
 )(
     input  logic        clk,
     input  logic        rst,
-    output logic [16:0] a0
+    input  logic        trigger,
+    output logic [31:0] a0
 );
 
 logic [D_WIDTH-1:0] PC;
@@ -12,10 +13,10 @@ logic [D_WIDTH-1:0] ImmOp;
 logic [1:0]         PCsrc;
 logic               EQ;
 logic               RegWrite;
-logic               ALUctrl;
+logic [3:0]         ALUctrl;
 logic               ALUsrc;
 logic               ResultSrc;
-logic [1:0]         ImmSrc;
+logic [2:0]         ImmSrc;
 logic [A_WIDTH-1:0] AD1;
 logic [A_WIDTH-1:0] AD2;
 logic [A_WIDTH-1:0] AD3;
@@ -36,7 +37,7 @@ counter_unit pc_counter(
     .rst(rst),
     .PCsrc(PCsrc),
     .ImmOp(ImmOp),
-    .RD1(Rd1),
+    .RD1(RD1),
     .PC(PC)
 );
 

@@ -1,20 +1,20 @@
-# This is the repo for IAC coursework Team4
+# This is the repo for Single-cycle cpu
 
 ---
 #### Things to do:
 
 - [x] Design a basic cpu structure (Lab4)
 
-- [ ] Design and test JAL and JALR
+- [x] Design and test JAL and JALR
 
 - [ ] Implement Lab3 in our cpu 
-
 - [ ] Design cpu to implement R-Type instruction
 - [ ] Design cpu to implement I-Type instruction
 - [ ] Design cpu to implement S-Type instruction
 - [ ] Design cpu to implement B-Type instruction
 - [ ] Design cpu to implement U-Type instruction
 - [ ] Design cpu to implement J-Type instruction
+- [ ] Modify the CPU to work under PIPELINE
 - [ ] Design cache for cpu
 - [ ] Design bus for cpu
 - [ ] software for f1
@@ -178,11 +178,14 @@ To achieve the pipelined processor, we must add clocked registers inbetween the 
 - Execute
 - Memory
 - Writeback
+
 The register file is written back on the falling edge of the clock, to allow data be written in the first half cycle and read back in the second half cycle. At each stage, the registers will have different Program Counter Values. We must append the letter F, D, E, M, W to the PC to distinguish where the signal is.
 
 We will use the same control unit as in the basic single cycle microarchitecture, ensuring that the control signals arrive at the same time as the datapath.
 
 Hazards?
+
+We will avoid Hazards through software implementation by using NOPs where needed.
 
 
 
@@ -195,7 +198,7 @@ define:
     addi s0, zero, 0x50     # number of cycles in 1 sec
 
 interupt:                   # waiting for trigger
-    bnq t0, zero, main      # t0 is constantly set to trigger
+    bne t0, zero, main      # t0 is constantly set to trigger
     beq zero, zero, interupt  
 
 main:

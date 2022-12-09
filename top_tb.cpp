@@ -18,10 +18,10 @@ int main(int argc, char **argv, char **env) {
   top->trace (tfp, 99);
   tfp->open ("top.vcd");
  
-  // init Vbuddy
-  // if (vbdOpen()!=1) return(-1);
-  // vbdHeader("top");
-  // vbdSetMode(1);        // Flag mode set to one-shot
+  //init Vbuddy
+  if (vbdOpen()!=1) return(-1);
+  vbdHeader("top");
+  vbdSetMode(1);        // Flag mode set to one-shot
 
   // initialize simulation inputs
 
@@ -35,6 +35,7 @@ int main(int argc, char **argv, char **env) {
       top->clk = !top->clk;
       top->eval ();
     }
+    top->trigger = vbdFlag();
 
 
     // vbdHex(4, (int(top->a0) >> 16) & 0xF);
@@ -48,10 +49,11 @@ int main(int argc, char **argv, char **env) {
     // //vbdHex(2, (int(top->SUM) >> 0) & 0xF);
     // vbdHex(1, int(top->EQ) & 0xF);
     // //top->PC = top->out_PC;
+    vbdBar(top->a0 & 0xFF);
 
 
     top->rst = (simcyc < 1);    // assert reset for 1st cycle
-    // vbdCycle(simcyc);
+    vbdCycle(simcyc);
 
     if (Verilated::gotFinish())  exit(0);
   }

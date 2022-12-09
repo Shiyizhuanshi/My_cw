@@ -8,7 +8,7 @@ module instr_rom
 
 );
 
-logic [7:0] rom_array [32'h00001FFF:32'h00001000]; 
+logic [7:0] rom_array [32'hBFC00000:32'hBFC00FFF]; 
 //Theoretically, there should be 2^32 in memmory                // but we do not need that many space, so I made to 
                                             // have only 256 memory spaces
 //date width should be 8bit because it is a byte addressable memory

@@ -9,7 +9,7 @@ module data_ram #(
 );
 
 
-logic [7:0] data_mem [32'hBFC00FFF:32'hBFC00000];
+logic [7:0] data_mem [32'h00001FFF:32'h00001000];
 
 initial begin
         $display("Loading Data_mem.");
