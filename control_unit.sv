@@ -28,257 +28,77 @@ always_comb
 case(opcode)
 
 //R-type instructions
-     7'b0110011: 
+     7'b0110011: begin
                 case(funct3)
-                3'b000:
-                    if (funct7 == 7'b0) //add 
-                            ALUctrl = 4'b0000;
-                    else //sub
-                            ALUctrl = 4'b0001;     
-                    RegWrite = 1;
-                    ImmSrc = 3'b011;
-                    ALUsrc = 0;
-                    PCsrc = 2'b0;
-                    ResultSrc = 0;
-                    Data_WE = 0;
-                    PCJump = 0;     
-                            
-
-                3'b001: //shift left logical (sll)
-                    begin
-                        ALUctrl = 4'b0010;
-                        RegWrite = 1;
-                        ImmSrc = 3'b011;
-                        ALUsrc = 0;
-                        PCsrc = 2'b0;
-                        ResultSrc = 0;
-                        Data_WE = 0;
-                        PCJump = 0;
-                    end
-
-                3'b010: //set less than
-                        begin
-                            ALUctrl = 4'b0011;
-                            RegWrite = 1;
-                            ImmSrc = 3'b011;
-                            ALUsrc = 0;
-                            PCsrc = 2'b0;
-                            ResultSrc = 0;
-                            Data_WE = 0;
-                            PCJump = 0;
-                        end 
-                
-                3'b011: //set less than unsigned
-                
-                        begin
-                            ALUctrl = 4'b0100;
-                            RegWrite = 1;
-                            ImmSrc = 3'b011;
-                            ALUsrc = 0;
-                            PCsrc = 2'b0;
-                            ResultSrc = 0;
-                            Data_WE = 0;
-                            PCJump = 0;
-                        end
-                
-                3'b100: //xor
-                        begin
-                            ALUctrl = 4'b0101;
-                            RegWrite = 1;
-                            ImmSrc = 3'b011;
-                            ALUsrc = 0;
-                            PCsrc = 2'b0;
-                            ResultSrc = 0;
-                            Data_WE = 0;
-                            PCJump = 0;
-                        end
-                
-                3'b101: 
-
-                    if (funct7 == 7'b0) //shift right logical
-                        begin
-                            ALUctrl = 4'b0110;
-                            RegWrite = 1;
-                            ImmSrc = 3'b011;
-                            ALUsrc = 0;
-                            PCsrc = 2'b0;
-                            ResultSrc = 0;
-                            Data_WE = 0;
-                            PCJump = 0;
-                        end
-
-                    else //shift right arithmetic
-                        begin
-                            ALUctrl = 4'b0111;
-                            RegWrite = 1;
-                            ImmSrc = 3'b011;
-                            ALUsrc = 0;
-                            PCsrc = 2'b0;
-                            ResultSrc = 0;
-                            Data_WE = 0;
-                            PCJump = 0;
-                        end
-                
-                3'b110: //OR
-                        begin
-                            ALUctrl = 4'b1000;
-                            RegWrite = 1;
-                            ImmSrc = 3'b011;
-                            ALUsrc = 0;
-                            PCsrc = 2'b0;
-                            ResultSrc = 0;
-                            Data_WE = 0;
-                            PCJump = 0;
-                        end
-                
-                3'b111:
-                        begin
-                            ALUctrl = 4'b1001;
-                            RegWrite = 1;
-                            ImmSrc = 3'b011;
-                            ALUsrc = 0;
-                            PCsrc = 2'b0;
-                            ResultSrc = 0;
-                            Data_WE = 0;
-                            PCJump = 0;
-                        end
-                   
-                    
-                default:
-                    begin
-                        ALUctrl = 4'b0000;
-                        RegWrite = 0;
-                        ImmSrc = 3'b0;
-                        ALUsrc = 0;
-                        PCsrc = 0;
-                        ResultSrc = 0;
-                        Data_WE = 0;
-                        PCJump = 0;
-                    end
+                3'b000:   ALUctrl = {3'b000, funct7[6]}; //add and sub      
+                3'b001:   ALUctrl = 4'b0010;             //shift left logical (sll)
+                3'b010:   ALUctrl = 4'b0011;             //set less than
+                3'b011:   ALUctrl = 4'b0100;             //set less than unsigned
+                3'b100:   ALUctrl = 4'b0101;             //xor
+                3'b101:   ALUctrl = {3'b011, funct7[6]}; //shift right logical or arithmetic
+                3'b110:   ALUctrl = 4'b1000;             //OR
+                3'b111:   ALUctrl = 4'b1001;             //AND
+                default:  ALUctrl = 4'b0000;             //add
                 endcase
+            RegWrite = 1;
+            ImmSrc = 3'b011;
+            ALUsrc = 0;
+            PCsrc = 2'b00;
+            ResultSrc = 0;
+            Data_WE = 0;
+            PCJump = 0;    
+     end
+                
 
 
 //I type instructions
 
-    7'b0010011: begin
-        case(funct3)
-            3'b000: ALUctrl = 4'b0000; //addi
-            3'b001: ALUctrl = 4'b0010; //slli
-        endcase
+    7'b0010011: begin 
+        ALUctrl = {2'b00, funct3[0], 1'b0};
         RegWrite = 1;
-        ImmSrc = 3'b0;
+        ImmSrc = 3'b000;
         ALUsrc = 1;
-        PCsrc = 2'b0;
+        PCsrc = 2'b00;
         ResultSrc = 0;
         Data_WE = 0;
         PCJump = 0;
     end
 
 //I-type, loading instructions
-    7'b0000011: 
-                case(funct3)
-
-                3'b010:
-                    begin  //load word (lw)
-                        ALUctrl = 4'b0000;
-                        RegWrite = 1;
-                        ImmSrc = 3'b0;
-                        ALUsrc = 1;
-                        PCsrc = 2'b0;
-                        ResultSrc = 1;
-                        PCJump = 0;
-                        Data_WE = 0;
-                    end
-                3'b001:
-                    begin //load half (lh)
-                        ALUctrl = 4'b0000;
-                        RegWrite = 1;
-                        ImmSrc = 3'b0;
-                        ALUsrc = 1;
-                        PCsrc = 2'b0;
-                        ResultSrc = 1;
-                        PCJump = 0;
-                        Data_WE = 0;
-                    end
-                3'b000: //load byte (lb)
-                    begin
-                        ALUctrl = 4'b0000;
-                        RegWrite = 1;
-                        ImmSrc = 3'b0;
-                        ALUsrc = 1;
-                        PCsrc = 2'b0;
-                        ResultSrc = 1;
-                        PCJump = 0;
-                        Data_WE = 0;
-                    end
-                endcase
-
+    7'b0000011: begin      //only load word
+        ALUctrl = 4'b0000;
+        RegWrite = 1;
+        ImmSrc = 3'b000;
+        ALUsrc = 1;
+        PCsrc = 2'b00;
+        ResultSrc = 1;
+        PCJump = 0;
+        Data_WE = 0;
+    end
 // S type instructions
-    7'b0100011:
-                case(funct3)
-
-                3'b010:
-                    begin //store word (sw)
-                        ALUctrl = 4'b0000;
-                        RegWrite = 0;
-                        ImmSrc = 3'b01;
-                        ALUsrc = 1;
-                        PCsrc = 0;
-                        Data_WE = 1;
-                        ResultSrc = 1;
-                        PCJump = 0;
-
-                    
-                    end
-                3'b001: //store half (sh)
-                    begin
-                        ALUctrl = 4'b0000;
-                        RegWrite = 0;
-                        ImmSrc = 3'b01;
-                        ALUsrc = 1;
-                        PCsrc = 0;
-                        Data_WE = 1;
-                        ResultSrc = 1;
-                        PCJump = 0;
-                    end
-                3'b000: //store byte (sb)
-                    begin
-                        ALUctrl = 4'b0000;
-                        RegWrite = 0;
-                        ImmSrc = 3'b01;
-                        ALUsrc = 1;
-                        PCsrc = 0;
-                        Data_WE = 1;
-                        ResultSrc = 1;
-                        PCJump = 0;
-                    end
-                    
-                endcase
+    7'b0100011:begin       //only store word
+        ALUctrl = 4'b0000;
+        RegWrite = 0;
+        ImmSrc = 3'b001;
+        ALUsrc = 1;
+        PCsrc = 2'b00;
+        Data_WE = 1;
+        ResultSrc = 1;
+        PCJump = 0;
+    end
 
                 
 //B type instructions
 
-    7'b1100011: if (funct3 == 3'b1)
-                    begin //bne
-                        ALUctrl = 4'b0000;
-                        RegWrite = 0;
-                        PCsrc = {0, ~EQ};   
-                        ImmSrc = 3'b10;
-                        ALUsrc = 0;
-                        ResultSrc = 0;
-                        PCJump = 0;
-                    end
-                else if (funct3 == 3'b0)
-                    begin //beq
-                        ALUctrl = 4'b0000;
-                        RegWrite = 0;
-                        PCsrc = {0,EQ};   
-                        ImmSrc = 3'b10;
-                        ALUsrc = 0;
-                        ResultSrc = 0;
-                        PCJump = 0;
-                    end
-
+    7'b1100011: begin
+        PCsrc = {0, funct3[0] ^ EQ};
+        ALUctrl = 4'b0000;
+        RegWrite = 0; 
+        ImmSrc = 3'b010;
+        ALUsrc = 0;
+        ResultSrc = 0;
+        PCJump = 0;
+    end
 
     7'b1101111: //jal
                 begin
@@ -302,13 +122,10 @@ case(opcode)
                     PCJump = 1;
     end
     
-
-
-
     default:begin
     ALUctrl = 4'b0000;
-    ImmSrc = 2'b00;
-    PCsrc = 0;
+    ImmSrc = 3'b000;
+    PCsrc = 2'b00;
     RegWrite = 0;
     ALUsrc = 0;
     ResultSrc = 0;
@@ -317,26 +134,4 @@ case(opcode)
 
 endcase
 
-
-
 endmodule
-
-    // Immsrc 00 for lw and addi, 01 for sw, 10 for bne 
-
-
-
-
-    // begin                        // add      0110011
-    // PCsrc = instr[6];            //addi      0010011
-    // ALUsrc = ~instr[6];           //branch    1100011
-    // ALUctrl = instr[14:12];      //          ||^ PCsrc
-    // RegWrite = ~instr[6];        //          |^   not ALUsrc
-    // ImmSrc = instr[6];          //          ^ not RegWrite 
-    // end                          //          ALUctrl: funct3
-
-
-    //ALU decoder
-
-
-
-
