@@ -33,6 +33,7 @@ always_comb begin
         4'b0111: ALUout = ALUop1 >>> ALUop2[4:0];
         4'b1000: ALUout = ALUop1 | ALUop2;
         4'b1001: ALUout = ALUop1 & ALUop2;
+        4'b1111: ALUout = ALUop2;
     endcase
     EQ = (ALUop1 == ALUop2);
 end

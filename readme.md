@@ -68,7 +68,7 @@ Here below are the instructions we need to implement for our cpu:
 
 ![image](https://user-images.githubusercontent.com/100481494/204165782-1fe59283-6ea0-4af5-be5f-f4643ab7e744.png)
 
-##### I & S-Tpye
+##### I & S-Type
 
 ![image](https://user-images.githubusercontent.com/100481494/204165825-e5da5872-dd44-4041-ba5e-5756faae755b.png)
 
@@ -90,7 +90,7 @@ Control unit generates control signal to all other blocks, so in order to implem
 
 | Name | PCSrc | ResultSrc | ImmSrc | ALUSrc | ALUctrl | MemWrite | RegWrite | DataCtrl | PCJump |
 |-----:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Length | 2 | 1 | 3 | 1 | 4 | 1 | 1 | 2 | 1 |
+| Length | 2 | 1 | 3 | 1 | 4 | 1 | 1 | 3 | 1 |
 
 **PCSrc**
 : To implement JAL and JALR we need to extend PCSrc to 2 bits. 
@@ -114,6 +114,13 @@ The 1 bit controls where PC should jumps to: high for JALR, low for JAL and brac
 
 **PCJump**
 : This signal basically control the source of WD3: high for result, low for current PC + 4.
+
+**DataCtrl**
+: This 3-bit signal controls what goes in and out from the data memory.
+
+| value | 000 | 001 | 010 | 101 | 110 |
+|-----:|:---:|:---:|:---:|:---:|:---:|
+| Meaning | word | half | byte | unsigned half | unsigned byte |
 
 While designing the cpu, we should strictly name all the variales as same as in this file.
 
@@ -150,7 +157,7 @@ It not only needs to do ten kinds of arithmetric operations but also needs to ge
 | 0111 | Shift Right Arithmetic | 
 | 1000 | OR | 
 | 1001 | AND |
-
+| 1111 | LUI |
 
 
 #### SignExtension
